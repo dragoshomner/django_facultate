@@ -10,7 +10,7 @@ class Article(models.Model):
     description = models.TextField()
     content = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
-    image = models.FilePathField(path="/img")
+    image = models.ImageField(upload_to="blog/static/articles/img/", blank=True)
     category = models.ForeignKey('Category', on_delete=models.CASCADE, default=None)
     author = models.ForeignKey('Author', on_delete=models.CASCADE, default=None)
 
