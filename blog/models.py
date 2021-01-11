@@ -12,9 +12,14 @@ class Article(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     image = models.FilePathField(path="/img")
     category = models.ForeignKey('Category', on_delete=models.CASCADE, default=None)
+    author = models.ForeignKey('Author', on_delete=models.CASCADE, default=None)
 
 class Comment(models.Model):
     author = models.CharField(max_length=60)
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     article = models.ForeignKey('Article', on_delete=models.CASCADE, default=None)
+
+class Author(models.Model):
+    name = models.CharField(max_length=50)
+    website = models.CharField(max_length=250)
