@@ -52,6 +52,9 @@
               <a class="nav-link" href="{% url 'login' %}">Login</a>
             </li>
           {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'my_comments' %}">My Comments</a>
+          </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'logout' %}">Logout</a>
             </li>

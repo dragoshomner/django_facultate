@@ -8,7 +8,10 @@ from blog.views import (
     ArticleByCategoryIndexView,
     RegisterView,
     LoginView,
-    LogoutView
+    LogoutView, 
+    CommentEditView,
+    MyCommentsIndexView,
+    CommentDeleteView
 )
 
 urlpatterns = [
@@ -20,4 +23,7 @@ urlpatterns = [
     path("articles/categories/", CategoryIndexView.as_view(), name="category_index"),
     path("articles/category/<int:category_pk>/", ArticleByCategoryIndexView.as_view(), name="article_by_category_index"),
     path('articles/<int:pk>/comment/create/', CommentCreateView.as_view(), name='comment_create'),
+    path('comment/<int:pk_comment>/edit', CommentEditView.as_view(), name='comment_edit'),
+    path('my-comments', MyCommentsIndexView.as_view(), name='my_comments'),
+    path('comment/<int:pk_comment>/delete', CommentDeleteView.as_view(), name='comment_delete'),
 ]

@@ -115,4 +115,34 @@ class LogoutView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('article_index')
+
+
+class CommentEditView(LoginRequiredMixin, UpdateView):
+    model = Comment
+    fields = ['body']
+    pk_url_kwarg = 'pk_comment'
+    template_name = 'comment_update.html'
+
+    def form_valid(self, form):
+        comment = Comment.objects.get(pk=self.kwargs['pk_comment'])
+        comment.body = form.cleaned_data['body']
+        comment.save()
+        return redirect("my_comments")
+
+class MyCommentsIndexView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        comments = Comment.objects.filter(created_by=self.request.user).order_by('-created_on')
+        context = {
+            'comments': comments
+        }
+        return render(request, 'comment_index.html', context)
+
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = "comment_delete.html"
+    model = Comment
+    pk_url_kwarg = 'pk_comment'
+
+    def get_success_url(self):
+        return reverse_lazy("my_comments")
         

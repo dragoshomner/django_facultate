@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+  <div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            {% if comments|length > 0 %}
+                <a href="/" class="btn btn-primary mb-1 mt-5" type="submit">Back to blog</a>
+                <h3 class="mt-4">My Comments:</h3>
+                {% for comment in comments %}
+                    <p>
+                        At article <a href="{% url 'article_detail' comment.article.pk %}">"{{ comment.article.title }}"</a> On {{comment.created_on.date }}&nbsp;
+                        <b>{{ comment.author }}</b> wrote:
+                    </p>
+                    <p>{{ comment.body }}</p>
+        
+                    <a href="{% url 'comment_edit' comment.pk %}" class="btn btn-warning" type="submit">Edit</a>
+                    <a href="{% url 'comment_delete' comment.pk %}" class="btn btn-danger" type="submit">Delete</a>
+                    <hr>
+                {% endfor %}
+            {% else %}
+                <a href="/" class="btn btn-primary mb-1 mt-5" type="submit">Back to blog</a>
+                <h3 class="mt-4">You do not have comments</h3>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
