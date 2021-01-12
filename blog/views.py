@@ -13,7 +13,7 @@ from django.views.generic import (
     CreateView, UpdateView, DeleteView
 )
 
-from blog.models import Article, Category, Comment
+from blog.models import Article, Category, Comment, User
 from blog.forms.CommentForm import CommentForm
 
 # Create your views here.
@@ -76,4 +76,42 @@ class ArticleByCategoryIndexView(View):
             'category_name': category.name
         }
         return render(request, 'article_index.html', context)
+
+
+class RegisterView(CreateView):
+    template_name= 'register.html'
+    form_class = UserCreationForm
+    model = User
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        user = User.objects.create_user(username=data['username'],
+                                        password=data['password1'])
+        return redirect('article_index')
+
+
+class LoginView(TemplateView):
+    template_name = 'login.html'
+
+    def get_context_data(self):
+        form = AuthenticationForm()
+        return {'form': form}
+
+    def post(self, request, *args, **kwargs):
+        form = AuthenticationForm(request=request, data=request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            user = authenticate(username=data['username'],
+                                password=data['password'])
+            login(request, user)
+            return redirect('article_index')
+        else:
+            return render(request, "login.html", {"form": form})
+
+
+class LogoutView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('article_index')
         
