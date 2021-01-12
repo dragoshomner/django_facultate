@@ -22,6 +22,7 @@ class Comment(models.Model):
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     article = models.ForeignKey('Article', on_delete=models.CASCADE, default=None)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Author(models.Model):
     name = models.CharField(max_length=50)

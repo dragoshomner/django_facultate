@@ -36,6 +36,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
         article = Article.objects.get(id=self.kwargs['pk'])
         Comment.objects.create(
             article=article,
+            created_by=self.request.user,
             **form.cleaned_data
         )
         return redirect(reverse_lazy("article_detail", kwargs={"pk": self.kwargs['pk']}))

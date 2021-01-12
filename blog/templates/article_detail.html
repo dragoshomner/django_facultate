@@ -32,11 +32,10 @@
     </div>
   </article>
 
-  <hr>
-
   <div class="container">
     <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
+            {% if user.is_authenticated %}
             <h3>Leave a comment:</h3>
             <form action="/articles/{{ article.pk }}/comment/create/" method="post" class="mb-3">
                 {% csrf_token %}
@@ -48,6 +47,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
+            {% endif %}
             {% if comments|length > 0 %}
                 <hr>
                 <h3 class="mt-4">Comments:</h3>
