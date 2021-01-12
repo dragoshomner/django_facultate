@@ -11,8 +11,8 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="site-heading">
-            <h1>Articles</h1>
-            <span class="subheading">Read the last news {% if category_name %} from {{ category_name }} {% endif %}</span>
+            <h1>Categories</h1>
+            <span class="subheading">Choose your topic to read more</span>
           </div>
         </div>
       </div>
@@ -23,19 +23,13 @@
   <div class="container mb-5">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
-        {% for article in articles %}
+        {% for category in categories %}
         <div class="post-preview">
-          <a href="{% url 'article_detail' article.pk %}">
+          <a href="{% url 'article_by_category_index' category.id %}">
             <h2 class="post-title">
-              {{ article.title }}
+              {{ category.name }}
             </h2>
-            <h3 class="post-subtitle">
-              {{ article.description }}
-            </h3>
           </a>
-          <p class="post-meta">Posted by
-            <a href="{{article.author.website}}" target="blank"></a>
-            on {{ article.created_on }}</p>
         </div>
         <hr>
         {% endfor %}
