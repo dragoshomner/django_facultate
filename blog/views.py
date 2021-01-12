@@ -1,50 +1,79 @@
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, HttpResponseNotAllowed
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+
+from django.views import View
+from django.views.generic import (
+    TemplateView, ListView, DetailView,
+    CreateView, UpdateView, DeleteView
+)
+
 from blog.models import Article, Category, Comment
 from blog.forms.CommentForm import CommentForm
 
 # Create your views here.
 
-def article_index(request):
-    articles = Article.objects.all()
-    context = {
-        'articles': articles
-    }
-    return render(request, 'article_index.html', context)
+class ArticleIndexView(View):
 
-def article_detail(request, pk):
-    article = Article.objects.get(pk=pk)
-    comments = Comment.objects.filter(article=article)
+    def get(self, request, *args, **kwargs):
+        articles = Article.objects.all().order_by('-created_on')
+        context = {
+            'articles': articles
+        }
+        return render(request, 'article_index.html', context)
 
-    form = CommentForm()
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = Comment(
-                author=form.cleaned_data["author"],
-                body=form.cleaned_data["body"],
-                article=article
-            )
-            comment.save()
 
-    context = {
-        'article': article,
-        'comments': comments,
-        'form': form
-    }
-    return render(request, 'article_detail.html', context)
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    fields = ['author', 'body']
 
-def category_index(request):
-    categories = Category.objects.all()
-    context = {
-        'categories': categories
-    }
-    return render(request, 'category_index.html', context)
+    def form_valid(self, form):
+        article = Article.objects.get(id=self.kwargs['pk'])
+        Comment.objects.create(
+            article=article,
+            **form.cleaned_data
+        )
+        return redirect(reverse_lazy("article_detail", kwargs={"pk": self.kwargs['pk']}))
+
+
+class ArticleDetailsView(View):
+
+    def get(self, request, *args, **kwargs):
+        article = Article.objects.get(pk=self.kwargs['pk'])
+        comments = Comment.objects.filter(article=article)
+        form = CommentForm()
+
+        context = {
+            'article': article,
+            'comments': comments,
+            'form': form
+        }
+        return render(request, 'article_detail.html', context)
+
+
+class CategoryIndexView(View):
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        context = {
+            'categories': categories
+        }
+        return render(request, 'category_index.html', context)
+
+
+class ArticleByCategoryIndexView(View):
     
-def article_by_category_index(request, category_pk):
-    category = Category.objects.get(pk=category_pk)
-    articles = Article.objects.filter(category=category)
-    context = {
-        'articles': articles,
-        'category_name': category.name
-    }
-    return render(request, 'article_index.html', context)
+    def get(self, request, *args, **kwargs):
+        category = Category.objects.get(pk=self.kwargs['category_pk'])
+        articles = Article.objects.filter(category=category).order_by('-created_on')
+        context = {
+            'articles': articles,
+            'category_name': category.name
+        }
+        return render(request, 'article_index.html', context)
+        

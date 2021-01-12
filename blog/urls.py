@@ -1,9 +1,17 @@
 from django.urls import path
 from . import views
+from blog.views import (
+    ArticleIndexView,
+    CommentCreateView,
+    ArticleDetailsView,
+    CategoryIndexView,
+    ArticleByCategoryIndexView
+)
 
 urlpatterns = [
-    path("", views.article_index, name="article_index"),
-    path("<int:pk>/", views.article_detail, name="article_detail"),
-    path("categories/", views.category_index, name="category_index"),
-    path("category/<int:category_pk>/", views.article_by_category_index, name="article_by_category_index"),
+    path("", ArticleIndexView.as_view(), name="article_index"),
+    path("articles/<int:pk>/", ArticleDetailsView.as_view(), name="article_detail"),
+    path("articles/categories/", CategoryIndexView.as_view(), name="category_index"),
+    path("articles/category/<int:category_pk>/", ArticleByCategoryIndexView.as_view(), name="article_by_category_index"),
+    path('articles/<int:pk>/comment/create/', CommentCreateView.as_view(), name='comment_create'),
 ]
